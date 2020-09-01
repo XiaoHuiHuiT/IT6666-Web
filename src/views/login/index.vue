@@ -152,6 +152,7 @@ export default {
         this.$refs.password.focus()
       })
     },
+    // 登陆逻辑的方法
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
