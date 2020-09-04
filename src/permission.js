@@ -1,23 +1,17 @@
 import router from './router'
 import store from './store'
 import { Message } from 'element-ui'
-// 进度条控件
 import NProgress from 'nprogress'
-// 进度条样式
 import 'nprogress/nprogress.css'
-// 从cookie中获取token
 import { getToken } from '@/utils/auth'
 import getPageTitle from '@/utils/get-page-title'
 
-// 进度条控件,NProgress配置
-NProgress.configure({ showSpinner: true })
+NProgress.configure({ showSpinner: false })
 
-// 没有重定向白名单
 const whiteList = ['/login', '/auth-redirect']
 
-// 前置路由守卫
 router.beforeEach(async(to, from, next) => {
-  // 开始进度条
+  // start progress bar
   NProgress.start()
   // 设置页面标题
   document.title = getPageTitle(to.meta.title)
@@ -26,21 +20,23 @@ router.beforeEach(async(to, from, next) => {
   // 判断是否有token
   if (hasToken) {
     if (to.path === '/login') {
-      // 如果已登陆了，跳转到首页
+      // 如果已登陆了，步转到首页
       next({ path: '/' })
-      // 进度条效果关闭
       NProgress.done()
     } else {
-      // 确定用户是否已通过getInfo获得其权限角色
-      const hasRoles = store.getters.roles && store.getters.roles.length > 0
-      if (hasRoles) {
+      // 确定用户是否已通过getInfo获得其用户
+      const hasName = store.getters.name !== ''
+      console.log(store.getters.name)
+      console.log(hasName)
+      if (hasName) {
         next()
       } else {
         try {
+          console.log('ok')
           // 如果没有得到权限则再去请求后台得到用户信息及权限信息
-          const { roles } = await store.dispatch('user/getInfo')
+          await store.dispatch('user/getInfo')
           // 绑定动态路由【后面我们要修改】
-          const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+          const accessRoutes = await store.dispatch('permission/generateRoutes', ['admin'])
           // 添加动态路由到主路由
           router.addRoutes(accessRoutes)
           next({ ...to, replace: true })
