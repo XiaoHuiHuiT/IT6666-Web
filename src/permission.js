@@ -36,7 +36,7 @@ router.beforeEach(async(to, from, next) => {
           // 如果没有得到权限则再去请求后台得到用户信息及权限信息
           await store.dispatch('user/getInfo')
           // 绑定动态路由【后面我们要修改】
-          const accessRoutes = await store.dispatch('permission/generateRoutes', ['admin'])
+          const accessRoutes = await store.dispatch('menu/getMenus')
           // 添加动态路由到主路由
           router.addRoutes(accessRoutes)
           next({ ...to, replace: true })

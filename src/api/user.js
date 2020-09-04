@@ -22,7 +22,7 @@ export function logout() {
     method: 'post'
   })
 }
-// 得到菜单信息
+// 加载菜单信息
 export function getMenus() {
   return request({
     url: '/login/getMenus',
